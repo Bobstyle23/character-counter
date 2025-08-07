@@ -1,0 +1,286 @@
+@layer variables {
+  :root {
+    --clr-neutral-900: #12131a;
+    --clr-neutral-800: #21222c;
+    --clr-neutral-700: #2a2b37;
+    --clr-neutral-600: #404254;
+    --clr-neutral-200: #e4e4ef;
+    --clr-neutral-100: #f2f2f7;
+    --clr-neutral: #fff;
+
+    --clr-purple-400: #d3a0fa;
+    --clr-purple-500: #c27cf8;
+
+    --clr-yellow-500: #ff9f00;
+
+    --clr-orange-500: #fe8159;
+    --clr-orange-800: #da3701;
+
+    --spacing-2: 0.2rem;
+    --spacing-4: 0.4rem;
+    --spacing-6: 0.6rem;
+    --spacing-8: 0.8rem;
+    --spacing-12: 1.2rem;
+    --spacing-16: 1.6rem;
+    --spacing-20: 2rem;
+    --spacing-24: 2.4rem;
+    --spacing-32: 3.2rem;
+    --spacing-40: 4rem;
+    --spacing-48: 4.8rem;
+    --spacing-64: 6.4rem;
+    --spacing-80: 8rem;
+
+    --radius-4: 0.4rem;
+    --radius-6: 0.6rem;
+    --radius-8: 0.8rem;
+    --radius-10: 1rem;
+    --radius-12: 1.2rem;
+    --radius-16: 1.6rem;
+    --radius-20: 2rem;
+    --radius-24: 2.4rem;
+    --radius-full: 100%;
+  }
+}
+
+@layer reset {
+  *,
+  *::before,
+  *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  html {
+    font-size: 62.5%;
+    text-size-adjust: none;
+    -moz-text-size-adjust: none;
+    -webkit-text-size-adjust: none;
+
+    @media (prefers-reduced-motion: no-preference) {
+      scroll-behavior: smooth;
+    }
+
+    color-scheme: light dark;
+  }
+
+  body {
+    font-family: "DM Sans", sans-serif;
+    line-height: 1;
+    background-color: light-dark(var(--clr-neutral), var(--clr-neutral-900));
+    background: url(./images/bg-light-theme.png) no-repeat center/cover;
+
+    @media (prefers-color-scheme: dark) {
+      background: url(./images/bg-dark-theme.png) no-repeat center/cover;
+    }
+
+    h1,
+    h2,
+    h3,
+    h4,
+    h5,
+    h6 {
+      text-wrap: balance;
+    }
+
+    p {
+      max-width: 75ch;
+      text-wrap: pretty;
+    }
+
+    img,
+    picture,
+    video,
+    svg {
+      display: block;
+      max-width: 100%;
+    }
+
+    input,
+    button,
+    textarea,
+    select {
+      font: inherit;
+    }
+
+    [role="list"] {
+      list-style: none;
+    }
+  }
+}
+
+@layer utilities {
+  .container {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: var(--spacing-40);
+    max-width: 99rem;
+    margin: var(--spacing-16) var(--spacing-16) var(--spacing-32);
+  }
+
+  .visually-hidden {
+    clip: rect(0 0 0 0);
+    clip-path: inset(50%);
+    height: 1px;
+    overflow: hidden;
+    position: absolute;
+    white-space: nowrap;
+    width: 1px;
+  }
+}
+
+@layer layout {
+  .navigation {
+    display: flex;
+    flex-flow: row nowrap;
+    justify-content: space-between;
+    align-items: center;
+    /* padding-block-end: var(--spacing-16); */
+  }
+
+  .navigation__logo {
+    width: 20rem;
+    height: 3rem;
+    background: url(./images/logo-light-theme.svg) no-repeat center/contain;
+
+    @media (prefers-color-scheme: dark) {
+      background: url(./images/logo-dark-theme.svg) no-repeat center/contain;
+    }
+  }
+
+  .navigation__btn {
+    background-color: var(--clr-neutral-100);
+    border: none;
+    padding: var(--spacing-6);
+    border-radius: var(--radius-6);
+
+    @media (prefers-color-scheme: dark) {
+      background-color: var(--clr-neutral-700);
+    }
+
+    &:hover {
+      cursor: pointer;
+    }
+  }
+  .navigation__switch {
+    width: 2rem;
+    height: 2rem;
+    background: url(./images/icon-moon.svg) no-repeat center/contain;
+
+    @media (prefers-color-scheme: dark) {
+      background: url(./images/icon-sun.svg) no-repeat center/contain;
+    }
+  }
+
+  .heading {
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: -0.1rem;
+    text-align: center;
+    text-wrap: auto;
+  }
+
+  .main {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: var(--spacing-16);
+  }
+
+  .main__text {
+    width: 100%;
+    height: 20rem;
+    background-color: var(--clr-neutral-100);
+    border: none;
+    box-shadow: inset 0 0 0 2px var(--clr-neutral-200);
+    border-radius: var(--radius-12);
+    padding: var(--spacing-12);
+    resize: none;
+    font-size: 1.4rem;
+    font-weight: 400;
+    line-height: 1.4rem;
+    letter-spacing: -0.06rem;
+    color: var(--clr-neutral-700);
+    outline: none;
+
+    &::placeholder {
+      font-size: inherit;
+      font-weight: inherit;
+      color: inherit;
+    }
+
+    &:focus {
+      box-shadow: inset 0 0 0 2px var(--clr-purple-500);
+      filter: drop-shadow(0 0 2px var(--clr-purple-400));
+      background-color: var(--clr-neutral-200);
+    }
+
+    &:hover {
+      background-color: var(--clr-neutral-200);
+      cursor: pointer;
+    }
+  }
+
+  .main__filters {
+    display: grid;
+    grid-template-columns: 1fr;
+    row-gap: var(--spacing-12);
+
+    div {
+      display: flex;
+      flex-flow: row nowrap;
+      align-items: center;
+      gap: 1rem;
+      height: 2.1rem;
+    }
+
+    div input[type="checkbox"] {
+      appearance: none;
+      -webkit-appearance: none;
+      cursor: pointer;
+      position: relative;
+      width: 1.6rem;
+      height: 1.6rem;
+      border: none;
+      box-shadow: inset 0 0 0 1px var(--clr-neutral-900);
+      border-radius: var(--radius-4);
+
+      &:checked::after {
+        content: "";
+        position: absolute;
+        top: 2px;
+        left: 6px;
+        width: 4px;
+        height: 10px;
+        border: solid var(--clr-neutral-900);
+        border-width: 0 2px 2px 0;
+        transform: rotate(45deg);
+      }
+
+      &:focus,
+      &:hover {
+        outline: 1px solid var(--clr-purple-400);
+        outline-offset: 1px;
+        box-shadow: inset 0 0 0 1px var(--clr-neutral-200);
+      }
+
+      &:checked {
+        background-color: var(--clr-purple-400);
+        box-shadow: none;
+      }
+    }
+
+    div input[type="text"] {
+      border: none;
+      box-shadow: inset 0 0 0 1px var(--clr-neutral-600);
+      border-radius: var(--radius-6);
+      width: 5.5rem;
+      height: auto;
+      padding-block: var(--spacing-4);
+      padding-inline: var(--spacing-12);
+      outline: none;
+      font-size: 1.4rem;
+      font-weight: 400;
+      letter-spacing: -0.06rem;
+    }
+  }
+}

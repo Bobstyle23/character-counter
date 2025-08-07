@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Character Counter</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap"
+      rel="stylesheet"
+    />
+    <link href="./style.css" rel="stylesheet" />
+  </head>
+  <body>
+    <div class="container">
+      <nav class="navigation">
+        <div class="navigation__logo" role="img" aria-label="Logo"></div>
+        <button class="navigation__btn">
+          <div
+            class="navigation__switch"
+            role="img"
+            aria-label="Theme switch"
+          ></div>
+        </button>
+      </nav>
+      <header>
+        <h1 class="heading">Analyze your text in real-time.</h1>
+      </header>
+      <main class="main">
+        <textarea
+          rows=""
+          cols=""
+          class="main__text"
+          placeholder="Start typing here… (or paste your text)"
+        ></textarea>
+        <form class="main__filters">
+          <div>
+            <input type="checkbox" name="" id="space" value="" />
+            <label for="space">Exclude Spaces</label>
+          </div>
+          <div>
+            <input type="checkbox" name="" id="limit" value="" />
+            <label for="limit">Set Character Limit</label>
+            <input type="text" id="character-limit" value="" hidden />
+          </div>
+          <p class="main__reading">
+            Approx. reading time:
+            <span class="main__reading--time">0</span> minute
+          </p>
+        </form>
+      </main>
+      <section class="result">
+        <div class="result__counts">
+          <div class="result--characters"></div>
+          <div class="result--words"></div>
+          <div class="result--sentences"></div>
+        </div>
+
+        <div class="result__progress-bars"></div>
+      </section>
+    </div>
+    <script src="./script.js"></script>
+  </body>
+</html>
