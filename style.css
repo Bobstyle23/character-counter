@@ -283,4 +283,79 @@
       letter-spacing: -0.06rem;
     }
   }
+
+  .result {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: var(--spacing-24);
+  }
+
+  .result__counts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(22.4rem, 100%), 1fr));
+    gap: var(--spacing-16);
+
+    div {
+      display: flex;
+      flex-flow: column nowrap;
+      gap: var(--spacing-8);
+      padding: var(--spacing-20);
+      border-radius: var(--radius-12);
+      position: relative;
+      height: 13rem;
+      overflow: hidden;
+
+      &::after {
+        content: "";
+        position: absolute;
+        top: -1rem;
+        right: -5rem;
+        width: 15rem;
+        height: 15rem;
+      }
+
+      &:nth-of-type(1) {
+        background-color: var(--clr-purple-400);
+        &::after {
+          background: url(./images/pattern-character-count.svg) no-repeat
+            center/contain;
+        }
+      }
+
+      &:nth-of-type(2) {
+        background-color: var(--clr-yellow-500);
+        &::after {
+          background: url(./images/pattern-word-count.svg) no-repeat
+            center/contain;
+          right: -3rem;
+        }
+      }
+
+      &:nth-of-type(3) {
+        background-color: var(--clr-orange-500);
+        &::after {
+          background: url(./images/pattern-sentence-count.svg) no-repeat
+            center/contain;
+          right: -3rem;
+        }
+      }
+    }
+  }
+
+  /* Selects every child but first one */
+  .result__text * + * {
+    font-size: 2rem;
+    font-weight: 400;
+    line-height: 1.4;
+    letter-spacing: -0.06rem;
+    color: var(--clr-neutral-900);
+    z-index: 2;
+  }
+
+  .result__count {
+    font-size: 4rem;
+    font-weight: 700;
+    letter-spacing: -0.1rem;
+    color: var(--clr-neutral-900);
+  }
 }
