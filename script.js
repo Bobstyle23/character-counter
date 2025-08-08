@@ -24,12 +24,47 @@ const totalCounts = {
   totalSentences: null,
 };
 
+let { totalChars, totalWords, totalSentences } = totalCounts;
+
+function countLetter(str, letter) {
+  let count = 0;
+  for (let i = 0; i < str.length; i++) {
+    if (str[i] === letter) {
+      count++;
+    }
+  }
+  return count;
+}
+
 textToAnalyze.addEventListener("input", function (e) {
   const value = e.target.value;
-  let { totalChars, totalWords, totalSentences } = totalCounts;
   totalChars = value.split("");
   totalWords = value.split(" ").filter((text) => Boolean(text));
   totalSentences = value.split(".").filter((text) => Boolean(text));
+
+  const onlyLetters = value.match(/[a-zA-Z]/g) || [];
+
+  const uniqueChars = [
+    ...new Set(
+      value
+        .toLowerCase()
+        .split("")
+        .filter((char) => /[a-z]/.test(char)),
+    ),
+  ];
+
+  const uniqeCharsInfo = uniqueChars
+    .map((char) => {
+      return {
+        character: char,
+        count: countLetter(value, char),
+        percentage: (
+          (countLetter(value, char) / onlyLetters.length) *
+          100
+        ).toFixed(2),
+      };
+    })
+    .sort((a, b) => b.count - a.count);
 
   characterCount.textContent = totalChars.length.toString().padStart("2", "0");
   wordCount.textContent = totalWords.length.toString().padStart("2", "0");

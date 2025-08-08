@@ -358,4 +358,17 @@
     letter-spacing: -0.1rem;
     color: var(--clr-neutral-900);
   }
+
+  .result__progress-bars {
+    display: flex;
+    flex-flow: column nowrap;
+    gap: var(--spacing-20);
+
+    h2 {
+      font-size: 2.4rem;
+      font-weight: 600;
+      line-height: 1.3;
+      letter-spacing: -0.1rem;
+    }
+  }
 }
