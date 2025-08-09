@@ -7,6 +7,8 @@ const characterCount = document.querySelector(".result__count--chars");
 const wordCount = document.querySelector(".result__count--words");
 const sentenceCount = document.querySelector(".result__count--sentences");
 
+const textReadingTime = document.querySelector(".main__reading--time");
+
 charLimitCheckbox.addEventListener("change", function (event) {
   const isChecked = event.target.checked;
   isChecked
@@ -34,6 +36,12 @@ function countLetter(str, letter) {
     }
   }
   return count;
+}
+
+const AVG_READING_TIME = 260;
+
+function countReadingTime(words) {
+  return words.length / AVG_READING_TIME;
 }
 
 textToAnalyze.addEventListener("input", function (e) {
@@ -66,6 +74,10 @@ textToAnalyze.addEventListener("input", function (e) {
     })
     .sort((a, b) => b.count - a.count);
 
+  let readingTime = countReadingTime(totalWords);
+  textReadingTime.textContent = !Number.isInteger(readingTime)
+    ? `<${Math.ceil(readingTime.toFixed(2))}`
+    : Math.ceil(readingTime.toFixed(2));
   characterCount.textContent = totalChars.length.toString().padStart("2", "0");
   wordCount.textContent = totalWords.length.toString().padStart("2", "0");
   sentenceCount.textContent = totalSentences.length
