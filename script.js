@@ -9,6 +9,7 @@ const sentenceCount = document.querySelector(".result__count--sentences");
 
 const textReadingTime = document.querySelector(".main__reading--time");
 
+const progressBarsContainer = document.querySelector(".progress");
 charLimitCheckbox.addEventListener("change", function (event) {
   const isChecked = event.target.checked;
   isChecked
@@ -74,10 +75,21 @@ textToAnalyze.addEventListener("input", function (e) {
     })
     .sort((a, b) => b.count - a.count);
 
+  const progressResults = uniqeCharsInfo.map((info) => {
+    return `
+        <p>${info.character.toUpperCase()}</p>
+        <progress class="progress-bar" value=${info.percentage} max="100">${info.percentage}</progress>
+        <p class="count">${info.count}<span>(${info.percentage}%)</span></p>
+        `;
+  });
+
+  progressBarsContainer.innerHTML = progressResults.join("");
+
   let readingTime = countReadingTime(totalWords);
   textReadingTime.textContent = !Number.isInteger(readingTime)
     ? `<${Math.ceil(readingTime.toFixed(2))}`
     : Math.ceil(readingTime.toFixed(2));
+
   characterCount.textContent = totalChars.length.toString().padStart("2", "0");
   wordCount.textContent = totalWords.length.toString().padStart("2", "0");
   sentenceCount.textContent = totalSentences.length
