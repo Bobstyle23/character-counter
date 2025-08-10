@@ -8,8 +8,13 @@ const wordCount = document.querySelector(".result__count--words");
 const sentenceCount = document.querySelector(".result__count--sentences");
 
 const textReadingTime = document.querySelector(".main__reading--time");
-
 const progressBarsContainer = document.querySelector(".progress");
+const seeMoreBtn = document.querySelector(".see-more");
+const chevronIcon = document.querySelector(".chevron");
+const noTextInfo = document.querySelector(".no-characters");
+
+const themeSwitchBtn = document.querySelector(".navigation__switch");
+
 charLimitCheckbox.addEventListener("change", function (event) {
   const isChecked = event.target.checked;
   isChecked
@@ -32,7 +37,7 @@ let { totalChars, totalWords, totalSentences } = totalCounts;
 function countLetter(str, letter) {
   let count = 0;
   for (let i = 0; i < str.length; i++) {
-    if (str[i] === letter) {
+    if (str.toLowerCase()[i] === letter) {
       count++;
     }
   }
@@ -95,4 +100,25 @@ textToAnalyze.addEventListener("input", function (e) {
   sentenceCount.textContent = totalSentences.length
     .toString()
     .padStart("2", "0");
+
+  uniqeCharsInfo.length > 5
+    ? seeMoreBtn.removeAttribute("hidden")
+    : seeMoreBtn.setAttribute("hidden", "");
+
+  noTextInfo.toggleAttribute("hidden", uniqeCharsInfo.length);
+});
+
+chevronIcon.setAttribute("src", "./images/icon.chevron-down.svg");
+
+seeMoreBtn.addEventListener("click", function (event) {
+  if (seeMoreBtn.textContent.includes("See more")) {
+    seeMoreBtn.firstChild.textContent = "See less ";
+  } else {
+    seeMoreBtn.firstChild.textContent = "See more ";
+  }
+  if (chevronIcon.getAttribute("src").includes("down")) {
+    chevronIcon.setAttribute("src", "./images/icon.chevron-up.svg");
+  } else {
+    chevronIcon.setAttribute("src", "./images/icon.chevron-down.svg");
+  }
 });
