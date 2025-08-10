@@ -120,6 +120,13 @@
     @media (min-width: 48em) {
       margin-inline: var(--spacing-32);
     }
+
+    @media (min-width: 65em) {
+      margin-block-start: var(--spacing-32);
+      margin-block-end: var(--spacing-64);
+      margin-inline: auto;
+      gap: var(--spacing-48);
+    }
   }
 
   .visually-hidden {
@@ -409,6 +416,9 @@
     line-height: 1.4;
     letter-spacing: -0.06rem;
     color: var(--clr-neutral-900);
+  }
+
+  .result__text * {
     z-index: 2;
   }
 
@@ -455,7 +465,9 @@
     width: 100%;
     height: 1.2rem;
     -webkit-appearance: none;
+    -moz-appearance: none;
     appearance: none;
+    border: none;
   }
 
   progress[value]::-webkit-progress-bar {
