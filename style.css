@@ -505,6 +505,10 @@
       &:hover {
         cursor: pointer;
       }
+
+      @media (prefers-color-scheme: dark) {
+        color: var(--clr-neutral-200);
+      }
     }
 
     .chevron {
@@ -513,6 +517,10 @@
       height: 2rem;
       display: inline-block;
       vertical-align: middle;
+
+      @media (prefers-color-scheme: dark) {
+        fill: var(--clr-neutral-200);
+      }
     }
   }
 

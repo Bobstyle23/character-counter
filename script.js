@@ -13,8 +13,8 @@ const sentenceCount = document.querySelector(".result__count--sentences");
 const textReadingTime = document.querySelector(".main__reading--time");
 const progressBarsContainer = document.querySelector(".progress");
 const seeMoreBtn = document.querySelector(".see-more");
-const chevronIcon = document.querySelector(".chevron");
 const noTextInfo = document.querySelector(".no-characters");
+const chevronIcons = document.querySelectorAll('[aria-label="Chevron icon"]');
 
 const totalCounts = {
   totalChars: null,
@@ -109,17 +109,14 @@ textToAnalyze.addEventListener("input", function (e) {
   noTextInfo.toggleAttribute("hidden", uniqeCharsInfo.length);
 });
 
-chevronIcon.setAttribute("src", "./images/icon.chevron-down.svg");
-
 seeMoreBtn.addEventListener("click", function (event) {
   if (seeMoreBtn.textContent.includes("See more")) {
     seeMoreBtn.firstChild.textContent = "See less ";
   } else {
     seeMoreBtn.firstChild.textContent = "See more ";
   }
-  if (chevronIcon.getAttribute("src").includes("down")) {
-    chevronIcon.setAttribute("src", "./images/icon.chevron-up.svg");
-  } else {
-    chevronIcon.setAttribute("src", "./images/icon.chevron-down.svg");
-  }
+
+  [...chevronIcons].forEach(function (icon) {
+    icon.toggleAttribute("hidden", !icon.hasAttribute("hidden"));
+  });
 });
