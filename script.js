@@ -123,5 +123,3 @@ seeMoreBtn.addEventListener("click", function (event) {
     chevronIcon.setAttribute("src", "./images/icon.chevron-down.svg");
   }
 });
-
-console.log(totalCounts);
