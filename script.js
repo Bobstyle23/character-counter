@@ -1,7 +1,10 @@
+const themeSwitchBtn = document.querySelector(".navigation__switch");
+const filterForm = document.querySelector(".main__filters");
+
+const removeSpacesCheckbox = document.getElementById("space");
 const charLimitCheckbox = document.getElementById("limit");
 const charLimitInputbox = document.getElementById("character-limit");
 const textToAnalyze = document.querySelector(".main__text");
-const filterForm = document.querySelector(".main__filters");
 
 const characterCount = document.querySelector(".result__count--chars");
 const wordCount = document.querySelector(".result__count--words");
@@ -13,7 +16,17 @@ const seeMoreBtn = document.querySelector(".see-more");
 const chevronIcon = document.querySelector(".chevron");
 const noTextInfo = document.querySelector(".no-characters");
 
-const themeSwitchBtn = document.querySelector(".navigation__switch");
+const totalCounts = {
+  totalChars: null,
+  totalWords: null,
+  totalSentences: null,
+};
+
+const AVG_READING_TIME = 260;
+
+filterForm.addEventListener("submit", function (e) {
+  e.preventDefault();
+});
 
 charLimitCheckbox.addEventListener("change", function (event) {
   const isChecked = event.target.checked;
@@ -21,16 +34,6 @@ charLimitCheckbox.addEventListener("change", function (event) {
     ? charLimitInputbox.removeAttribute("hidden")
     : charLimitInputbox.setAttribute("hidden", "");
 });
-
-filterForm.addEventListener("submit", function (e) {
-  e.preventDefault();
-});
-
-const totalCounts = {
-  totalChars: null,
-  totalWords: null,
-  totalSentences: null,
-};
 
 let { totalChars, totalWords, totalSentences } = totalCounts;
 
@@ -44,19 +47,17 @@ function countLetter(str, letter) {
   return count;
 }
 
-const AVG_READING_TIME = 260;
-
 function countReadingTime(words) {
   return words.length / AVG_READING_TIME;
 }
 
 textToAnalyze.addEventListener("input", function (e) {
   const value = e.target.value;
+  const onlyLetters = value.match(/[a-zA-Z]/g) || [];
+
   totalChars = value.split("");
   totalWords = value.split(" ").filter((text) => Boolean(text));
   totalSentences = value.split(".").filter((text) => Boolean(text));
-
-  const onlyLetters = value.match(/[a-zA-Z]/g) || [];
 
   const uniqueChars = [
     ...new Set(
@@ -122,3 +123,5 @@ seeMoreBtn.addEventListener("click", function (event) {
     chevronIcon.setAttribute("src", "./images/icon.chevron-down.svg");
   }
 });
+
+console.log(totalCounts);
