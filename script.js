@@ -16,6 +16,16 @@ const seeMoreBtn = document.querySelector(".see-more");
 const noTextInfo = document.querySelector(".no-characters");
 const chevronIcons = document.querySelectorAll('[aria-label="Chevron icon"]');
 
+document.documentElement.dataset.theme = "light";
+
+themeSwitchBtn.addEventListener("click", () => {
+  if (document.documentElement.dataset.theme === "light") {
+    document.documentElement.dataset.theme = "dark";
+  } else {
+    document.documentElement.dataset.theme = "light";
+  }
+});
+
 const totalCounts = {
   totalChars: null,
   totalWords: null,
