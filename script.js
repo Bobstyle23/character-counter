@@ -101,6 +101,13 @@ textToAnalyze.addEventListener("input", function (e) {
     })
     .sort((a, b) => b.count - a.count);
 
+  const [topFiveLetters, ...otherLetters] = [
+    uniqeCharsInfo.slice(0, 5),
+    ...uniqeCharsInfo.slice(5),
+  ];
+
+  progressBarsContainer.toggleAttribute("hidden", !uniqeCharsInfo.length);
+
   const progressResults = uniqeCharsInfo.map((info) => {
     return `
         <p>${info.character.toUpperCase()}</p>
@@ -134,14 +141,11 @@ textToAnalyze.addEventListener("input", function (e) {
     .toString()
     .padStart("2", "0");
 
-  uniqeCharsInfo.length > 5
-    ? seeMoreBtn.removeAttribute("hidden")
-    : seeMoreBtn.setAttribute("hidden", "");
-
+  seeMoreBtn.toggleAttribute("hidden", uniqeCharsInfo.length < 5);
   noTextInfo.toggleAttribute("hidden", uniqeCharsInfo.length);
 });
 
-seeMoreBtn.addEventListener("click", function (event) {
+seeMoreBtn.addEventListener("click", function () {
   if (seeMoreBtn.textContent.includes("See more")) {
     seeMoreBtn.firstChild.textContent = "See less ";
   } else {
