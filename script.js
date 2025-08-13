@@ -16,6 +16,9 @@ const seeMoreBtn = document.querySelector(".see-more");
 const noTextInfo = document.querySelector(".no-characters");
 const chevronIcons = document.querySelectorAll('[aria-label="Chevron icon"]');
 
+const errorBox = document.querySelector(".error__box");
+const errorLimitNumber = document.querySelector(".error__limit-number");
+
 if (window.matchMedia("(prefers-color-scheme: dark)").matches) {
   document.documentElement.dataset.theme = "dark";
 } else {
