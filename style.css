@@ -200,6 +200,7 @@
   .error {
     box-shadow: inset 0 0 0 1px var(--clr-orange-800);
     filter: drop-shadow(0 0 8px var(--clr-orange-800));
+    transform: translateZ(0);
   }
 }
 
