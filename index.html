@@ -34,6 +34,13 @@
           class="main__text"
           placeholder="Start typing here… (or paste your text)"
         ></textarea>
+        <div class="error__box" hidden>
+          <img class="error__icon" src="./images/info-circle.svg" alt="" />
+          <p class="error__text">
+            Limit reached! Your text exceeds
+            <span class="error__limit-number"></span> characters.
+          </p>
+        </div>
         <form class="main__filters">
           <div>
             <input type="checkbox" name="" id="space" value="" />
@@ -68,7 +75,7 @@
 
         <div class="result__progress-bars">
           <h2>Letter Density</h2>
-          <div class="progress"></div>
+          <div class="progress" hidden></div>
           <p class="no-characters">
             No characters found. Start typing to see letter density
           </p>
