@@ -298,6 +298,7 @@
     &:focus {
       box-shadow: inset 0 0 0 2px var(--clr-purple-500);
       filter: drop-shadow(0 0 8px var(--clr-purple-400));
+      transform: translateZ(0); /* Fixes Safari issue */
       background-color: var(--main-text-bg-focus);
     }
 
