@@ -116,6 +116,18 @@ textToAnalyze.addEventListener("input", function (e) {
     ? `<${Math.ceil(readingTime.toFixed(2))}`
     : Math.ceil(readingTime.toFixed(2));
 
+  removeSpacesCheckbox.addEventListener("change", (event) => {
+    const isChecked = event.target.checked;
+    isChecked
+      ? (characterCount.textContent = value
+          .replaceAll(" ", "")
+          .length.toString()
+          .padStart(2, "0"))
+      : (characterCount.textContent = totalChars.length
+          .toString()
+          .padStart("2", "0"));
+  });
+
   characterCount.textContent = totalChars.length.toString().padStart("2", "0");
   wordCount.textContent = totalWords.length.toString().padStart("2", "0");
   sentenceCount.textContent = totalSentences.length
