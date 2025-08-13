@@ -74,6 +74,30 @@ function countReadingTime(words) {
   return words.length / AVG_READING_TIME;
 }
 
+let limitValue = 0;
+
+function checkError() {
+  const value = textToAnalyze.value;
+  const isError = charLimitCheckbox.checked && value.length > limitValue;
+  if (isError) {
+    textToAnalyze.classList.add("error");
+    errorBox.removeAttribute("hidden");
+    errorLimitNumber.textContent = limitValue;
+  } else {
+    textToAnalyze.classList.remove("error");
+    errorBox.setAttribute("hidden", "");
+  }
+
+  return { isError };
+}
+
+textToAnalyze.addEventListener("input", checkError);
+
+charLimitInputbox.addEventListener("change", (event) => {
+  limitValue = Number(event.target.value);
+  checkError();
+});
+
 textToAnalyze.addEventListener("input", function (e) {
   const value = e.target.value;
   const onlyLetters = value.match(/[a-zA-Z]/g) || [];
