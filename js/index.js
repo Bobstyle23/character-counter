@@ -38,17 +38,9 @@ import { countLetter, countReadingTime, switchMode } from "./utilities.js";
 
 modeSwitchBtn.addEventListener("click", switchMode);
 
-const totalCounts = {
-  totalChars: null,
-  totalWords: null,
-  totalSentences: null,
-};
-
 filterForm.addEventListener("submit", function (e) {
   e.preventDefault();
 });
-
-let { totalChars, totalWords, totalSentences } = totalCounts;
 
 let limitValue = 0;
 
@@ -64,6 +56,22 @@ function checkError() {
     limitCheckbox.checked && value.length > limitValue && Boolean(limitValue);
 
   toggleErrorClass(isError);
+}
+
+let isChecked = false;
+let totalChars, totalWords, totalSentences;
+
+function updateCounts() {
+  const value = textArea.value;
+  totalWords = value.split(" ").filter(Boolean);
+  totalSentences = value.split(".").filter(Boolean);
+
+  totalChars = isChecked ? value.replaceAll(" ", "") : value.split("");
+
+  const totals = [totalChars, totalWords, totalSentences];
+  [characterCount, wordCount, sentenceCount].forEach((count, idx) => {
+    count.textContent = totals[idx].length.toString();
+  });
 }
 
 textArea.addEventListener("input", checkError);
@@ -90,9 +98,7 @@ textArea.addEventListener("input", function (e) {
   const value = e.target.value;
   const onlyLetters = value.match(/[a-zA-Z]/g) || [];
 
-  totalChars = value.split("");
-  totalWords = value.split(" ").filter((text) => Boolean(text));
-  totalSentences = value.split(".").filter((text) => Boolean(text));
+  updateCounts();
 
   const uniqueChars = [
     ...new Set(
@@ -139,22 +145,11 @@ textArea.addEventListener("input", function (e) {
     : Math.ceil(readingTime.toFixed(2));
 
   excludeSpacesCheckbox.addEventListener("change", (event) => {
-    const isChecked = event.target.checked;
-    isChecked
-      ? (characterCount.textContent = value
-          .replaceAll(" ", "")
-          .length.toString()
-          .padStart(2, "0"))
-      : (characterCount.textContent = totalChars.length
-          .toString()
-          .padStart("2", "0"));
+    isChecked = event.target.checked;
+    updateCounts();
   });
 
-  characterCount.textContent = totalChars.length.toString().padStart("2", "0");
-  wordCount.textContent = totalWords.length.toString().padStart("2", "0");
-  sentenceCount.textContent = totalSentences.length
-    .toString()
-    .padStart("2", "0");
+  updateCounts();
 
   seeMoreBtn.toggleAttribute("hidden", uniqeCharsInfo.length < 5);
   noTextInfo.toggleAttribute("hidden", uniqeCharsInfo.length);
