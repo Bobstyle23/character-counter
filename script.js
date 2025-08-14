@@ -1,5 +1,7 @@
-const modeSwitchBtn = document.querySelector(".navigation__switch");
+const modeSwitchBtn = document.querySelector(".navigation__btn");
+const textArea = document.querySelector(".main__text");
 const filterForm = document.querySelector(".main__filters");
+const characterCount = document.querySelector(".result__count--chars");
 
 function setMode() {
   if (window.matchMedia("(prefers-color-scheme:dark)").matches) {
@@ -29,6 +31,21 @@ setMode();
 
 filterForm.addEventListener("submit", (event) => {
   event.preventDefault();
+});
+
+function analyzeText(value) {
+  let totalChars, totalWords, totalSentences;
+
+  totalChars = value.split("");
+  totalWords = value.split(" ").filter((text) => Boolean(text));
+  totalSentences = value.split(".").filter((text) => Boolean(text));
+
+  console.log({ totalChars, totalWords, totalSentences });
+  return { totalChars, totalWords, totalSentences };
+}
+
+textArea.addEventListener("input", (event) => {
+  analyzeText(event.target.value);
 });
 
 // const themeSwitchBtn = document.querySelector(".navigation__switch");
