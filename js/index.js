@@ -44,6 +44,10 @@ filterForm.addEventListener("submit", function (e) {
 
 let limitValue = 0;
 
+let isExcludeSpaceChecked = false;
+let isLimitExceeded = false;
+let totalChars, totalWords, totalSentences;
+
 function toggleErrorClass(isError) {
   textArea.classList.toggle("error", isError);
   errorBox.toggleAttribute("hidden", !isError);
@@ -55,22 +59,26 @@ function checkError() {
   const isError =
     limitCheckbox.checked && value.length > limitValue && Boolean(limitValue);
 
+  isLimitExceeded = isError;
+  //NOTE: Invokes updateCounts() if limit exceeded
+  isLimitExceeded && updateCounts();
   toggleErrorClass(isError);
 }
-
-let isChecked = false;
-let totalChars, totalWords, totalSentences;
 
 function updateCounts() {
   const value = textArea.value;
   totalWords = value.split(" ").filter(Boolean);
   totalSentences = value.split(".").filter(Boolean);
 
-  totalChars = isChecked ? value.replaceAll(" ", "") : value.split("");
+  totalChars = isExcludeSpaceChecked
+    ? value.replaceAll(" ", "")
+    : value.split("");
 
   const totals = [totalChars, totalWords, totalSentences];
   [characterCount, wordCount, sentenceCount].forEach((count, idx) => {
-    count.textContent = totals[idx].length.toString();
+    count.textContent = isLimitExceeded
+      ? "00"
+      : totals[idx].length.toString().padStart(2, "0");
   });
 }
 
@@ -79,6 +87,8 @@ textArea.addEventListener("input", checkError);
 limitInputbox.addEventListener("input", (event) => {
   limitValue = Number(event.target.value);
   checkError();
+  //NOTE: Updates counts on limit value change
+  updateCounts();
 });
 
 limitCheckbox.addEventListener("change", (event) => {
@@ -98,6 +108,7 @@ textArea.addEventListener("input", function (e) {
   const value = e.target.value;
   const onlyLetters = value.match(/[a-zA-Z]/g) || [];
 
+  //NOTE: Initial invoke & updating counts
   updateCounts();
 
   const uniqueChars = [
@@ -145,11 +156,10 @@ textArea.addEventListener("input", function (e) {
     : Math.ceil(readingTime.toFixed(2));
 
   excludeSpacesCheckbox.addEventListener("change", (event) => {
-    isChecked = event.target.checked;
+    isExcludeSpaceChecked = event.target.checked;
+    //NOTE: Calls updateCounts() on exclue space checkbox checked
     updateCounts();
   });
-
-  updateCounts();
 
   seeMoreBtn.toggleAttribute("hidden", uniqeCharsInfo.length < 5);
   noTextInfo.toggleAttribute("hidden", uniqeCharsInfo.length);
