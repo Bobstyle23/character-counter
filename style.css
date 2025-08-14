@@ -125,8 +125,9 @@
   body {
     font-family: "DM Sans", sans-serif;
     line-height: 1;
-    background-color: var(--body-bg);
-    background: var(--bg-theme) no-repeat center/cover;
+    background:
+      var(--bg-theme) no-repeat center/cover,
+      var(--body-bg);
 
     h1,
     h2,
