@@ -98,7 +98,7 @@ function updateCounts() {
   });
 }
 
-function updateProgressBars() {
+function updateProgressBars(expand = false) {
   const value = textArea.value;
   const onlyLetters = value.match(/[a-zA-Z]/g) || [];
 
@@ -124,9 +124,16 @@ function updateProgressBars() {
     })
     .sort((a, b) => b.count - a.count);
 
+  const [topLetters, otherLetters] = [
+    progressValues.slice(0, 5),
+    progressValues.slice(5),
+  ];
+
+  const lettersToShow = expand ? [...topLetters, ...otherLetters] : topLetters;
+
   progressBarsContainer.toggleAttribute("hidden", !progressValues.length);
 
-  const progressResults = progressValues.map((progress) => {
+  const progressResults = lettersToShow.map((progress) => {
     return `
         <p>${progress.character.toUpperCase()}</p>
         <progress class="progress-bar" value=${progress.percentage} max="100">${progress.percentage}</progress>
@@ -181,11 +188,6 @@ textArea.addEventListener("input", function (e) {
   //NOTE: Initial invoke & updating counts
   updateCounts();
 
-  // const [topFiveLetters, ...otherLetters] = [
-  //   uniqeCharsInfo.slice(0, 5),
-  //   ...uniqeCharsInfo.slice(5),
-  // ];
-
   //NOTE: Updates readingTime
   updateReadingTime(totalWords);
   checkError();
@@ -201,5 +203,6 @@ seeMoreBtn.addEventListener("click", function () {
 
   [...chevronIcons].forEach(function (icon) {
     icon.toggleAttribute("hidden", !icon.hasAttribute("hidden"));
+    updateProgressBars(!icon.hasAttribute("hidden"));
   });
 });
