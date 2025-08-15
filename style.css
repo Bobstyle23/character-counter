@@ -314,7 +314,7 @@
 
   .error__box {
     display: flex;
-    flex-flow: row wrap;
+    flex-flow: row nowrap;
     gap: var(--spacing-8);
     align-items: center;
     margin-block-start: -0.4rem;
