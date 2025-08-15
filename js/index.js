@@ -3,6 +3,7 @@ const textArea = document.querySelector(".main__text");
 const filterForm = document.querySelector(".main__filters");
 
 const excludeSpacesCheckbox = document.getElementById("space");
+const noSpaceIndicatorText = document.querySelector(".result__count--no-space");
 const limitCheckbox = document.getElementById("limit");
 const limitInputbox = document.getElementById("character-limit");
 
@@ -61,7 +62,7 @@ function checkError() {
 
   isLimitExceeded = isError;
   //NOTE: Invokes updateCounts() if limit exceeded
-  isLimitExceeded && updateCounts();
+  updateCounts();
   toggleErrorClass(isError);
 }
 
@@ -82,8 +83,6 @@ function updateCounts() {
   });
 }
 
-textArea.addEventListener("input", checkError);
-
 limitInputbox.addEventListener("input", (event) => {
   limitValue = Number(event.target.value);
   checkError();
@@ -100,16 +99,25 @@ limitCheckbox.addEventListener("change", (event) => {
   limitInputbox.toggleAttribute("hidden", !isChecked);
   limitInputbox.value = "";
   limitValue = 0;
-
+  isLimitExceeded = isChecked && isError;
+  updateCounts();
   toggleErrorClass(isError);
 });
 
-textArea.addEventListener("input", function (e) {
-  const value = e.target.value;
-  const onlyLetters = value.match(/[a-zA-Z]/g) || [];
+excludeSpacesCheckbox.addEventListener("change", (event) => {
+  isExcludeSpaceChecked = event.target.checked;
+  noSpaceIndicatorText.toggleAttribute("hidden", !event.target.checked);
+  //NOTE: Calls updateCounts() on exclue space checkbox checked
+  updateCounts();
+});
 
+textArea.addEventListener("input", function (e) {
+  checkError();
   //NOTE: Initial invoke & updating counts
   updateCounts();
+
+  const value = e.target.value;
+  const onlyLetters = value.match(/[a-zA-Z]/g) || [];
 
   const uniqueChars = [
     ...new Set(
@@ -154,12 +162,6 @@ textArea.addEventListener("input", function (e) {
   textReadingTime.textContent = !Number.isInteger(readingTime)
     ? `<${Math.ceil(readingTime.toFixed(2))}`
     : Math.ceil(readingTime.toFixed(2));
-
-  excludeSpacesCheckbox.addEventListener("change", (event) => {
-    isExcludeSpaceChecked = event.target.checked;
-    //NOTE: Calls updateCounts() on exclue space checkbox checked
-    updateCounts();
-  });
 
   seeMoreBtn.toggleAttribute("hidden", uniqeCharsInfo.length < 5);
   noTextInfo.toggleAttribute("hidden", uniqeCharsInfo.length);
