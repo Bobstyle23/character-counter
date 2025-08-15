@@ -66,7 +66,6 @@ function checkError() {
   //NOTE: Invokes updateCounts() if limit exceeded
   updateCounts();
   toggleErrorClass(isError);
-  console.log({ isError, isLimitExceeded });
 }
 
 function updateReadingTime(words) {
@@ -179,7 +178,6 @@ excludeSpacesCheckbox.addEventListener("change", (event) => {
 });
 
 textArea.addEventListener("input", function (e) {
-  checkError();
   //NOTE: Initial invoke & updating counts
   updateCounts();
 
@@ -188,10 +186,10 @@ textArea.addEventListener("input", function (e) {
   //   ...uniqeCharsInfo.slice(5),
   // ];
 
-  updateProgressBars();
-
   //NOTE: Updates readingTime
   updateReadingTime(totalWords);
+  checkError();
+  updateProgressBars();
 });
 
 seeMoreBtn.addEventListener("click", function () {
