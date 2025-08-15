@@ -96,6 +96,50 @@ function updateCounts() {
   });
 }
 
+function updateProgressBars() {
+  const value = textArea.value;
+  const onlyLetters = value.match(/[a-zA-Z]/g) || [];
+
+  const uniqueCharacters = [
+    ...new Set(
+      value
+        .toLowerCase()
+        .split("")
+        .filter((char) => /[a-z]/.test(char)),
+    ),
+  ];
+
+  const progressValues = uniqueCharacters
+    .map((char) => {
+      return {
+        character: char,
+        count: countLetter(value, char),
+        percentage: (
+          (countLetter(value, char) / onlyLetters.length) *
+          100
+        ).toFixed(2),
+      };
+    })
+    .sort((a, b) => b.count - a.count);
+
+  progressBarsContainer.toggleAttribute("hidden", !progressValues.length);
+
+  const progressResults = progressValues.map((progress) => {
+    return `
+        <p>${progress.character.toUpperCase()}</p>
+        <progress class="progress-bar" value=${progress.percentage} max="100">${progress.percentage}</progress>
+        <p class="count">${progress.count} <span>(${progress.percentage}%)</span></p>
+        `;
+  });
+
+  progressBarsContainer.innerHTML = isLimitExceeded
+    ? `<small class="error__text">Limit reached! Adjust your text to see your results.</small>`
+    : progressResults.join("");
+
+  seeMoreBtn.toggleAttribute("hidden", progressValues.length < 5);
+  noTextInfo.toggleAttribute("hidden", progressValues.length);
+}
+
 limitInputbox.addEventListener("input", (event) => {
   limitValue = Number(event.target.value);
   checkError();
@@ -129,53 +173,15 @@ textArea.addEventListener("input", function (e) {
   //NOTE: Initial invoke & updating counts
   updateCounts();
 
-  const value = e.target.value;
-  const onlyLetters = value.match(/[a-zA-Z]/g) || [];
+  // const [topFiveLetters, ...otherLetters] = [
+  //   uniqeCharsInfo.slice(0, 5),
+  //   ...uniqeCharsInfo.slice(5),
+  // ];
 
-  const uniqueChars = [
-    ...new Set(
-      value
-        .toLowerCase()
-        .split("")
-        .filter((char) => /[a-z]/.test(char)),
-    ),
-  ];
-
-  const uniqeCharsInfo = uniqueChars
-    .map((char) => {
-      return {
-        character: char,
-        count: countLetter(value, char),
-        percentage: (
-          (countLetter(value, char) / onlyLetters.length) *
-          100
-        ).toFixed(2),
-      };
-    })
-    .sort((a, b) => b.count - a.count);
-
-  const [topFiveLetters, ...otherLetters] = [
-    uniqeCharsInfo.slice(0, 5),
-    ...uniqeCharsInfo.slice(5),
-  ];
-
-  progressBarsContainer.toggleAttribute("hidden", !uniqeCharsInfo.length);
-
-  const progressResults = uniqeCharsInfo.map((info) => {
-    return `
-        <p>${info.character.toUpperCase()}</p>
-        <progress class="progress-bar" value=${info.percentage} max="100">${info.percentage}</progress>
-        <p class="count">${info.count} <span>(${info.percentage}%)</span></p>
-        `;
-  });
-
-  progressBarsContainer.innerHTML = progressResults.join("");
+  updateProgressBars();
 
   //NOTE: Updates readingTime
   updateReadingTime(totalWords);
-
-  seeMoreBtn.toggleAttribute("hidden", uniqeCharsInfo.length < 5);
-  noTextInfo.toggleAttribute("hidden", uniqeCharsInfo.length);
 });
 
 seeMoreBtn.addEventListener("click", function () {
