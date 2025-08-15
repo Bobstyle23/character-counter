@@ -262,6 +262,8 @@
     @media (min-width: 48em) {
       font-size: 6.4rem;
       text-wrap: balance;
+      max-width: 51rem;
+      margin-inline: auto;
     }
   }
 
