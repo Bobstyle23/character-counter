@@ -58,12 +58,15 @@ function toggleErrorClass(isError) {
 function checkError() {
   const value = textArea.value;
   const isError =
-    limitCheckbox.checked && value.length > limitValue && Boolean(limitValue);
+    limitCheckbox.checked &&
+    (totalChars.length || value.length) > limitValue &&
+    Boolean(limitValue);
 
   isLimitExceeded = isError;
   //NOTE: Invokes updateCounts() if limit exceeded
   updateCounts();
   toggleErrorClass(isError);
+  console.log({ isError, isLimitExceeded });
 }
 
 function updateReadingTime(words) {
@@ -155,7 +158,7 @@ limitCheckbox.addEventListener("change", (event) => {
   const isChecked = event.target.checked;
   const isError =
     limitCheckbox.checked &&
-    textArea.value.length > limitValue &&
+    (totalChars?.length || textArea.value.length) > limitValue &&
     Boolean(limitValue);
   limitInputbox.toggleAttribute("hidden", !isChecked);
   limitInputbox.value = "";
@@ -171,6 +174,8 @@ excludeSpacesCheckbox.addEventListener("change", (event) => {
   noSpaceIndicatorText.toggleAttribute("hidden", !event.target.checked);
   //NOTE: Calls updateCounts() on exclue space checkbox checked
   updateCounts();
+  checkError();
+  updateProgressBars();
 });
 
 textArea.addEventListener("input", function (e) {
