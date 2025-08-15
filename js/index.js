@@ -48,6 +48,7 @@ let limitValue = 0;
 let isExcludeSpaceChecked = false;
 let isLimitExceeded = false;
 let totalChars, totalWords, totalSentences;
+let isExpanded = false;
 
 function toggleErrorClass(isError) {
   textArea.classList.toggle("error", isError);
@@ -98,7 +99,7 @@ function updateCounts() {
   });
 }
 
-function updateProgressBars(expand = false) {
+function updateProgressBars() {
   const value = textArea.value;
   const onlyLetters = value.match(/[a-zA-Z]/g) || [];
 
@@ -129,7 +130,9 @@ function updateProgressBars(expand = false) {
     progressValues.slice(5),
   ];
 
-  const lettersToShow = expand ? [...topLetters, ...otherLetters] : topLetters;
+  const lettersToShow = isExpanded
+    ? [...topLetters, ...otherLetters]
+    : topLetters;
 
   progressBarsContainer.toggleAttribute("hidden", !progressValues.length);
 
@@ -149,6 +152,9 @@ function updateProgressBars(expand = false) {
     "hidden",
     progressValues.length < 5 || isLimitExceeded,
   );
+
+  seeMoreBtn.firstChild.textContent = isExpanded ? "See less" : "See more";
+
   noTextInfo.toggleAttribute("hidden", progressValues.length);
 }
 
@@ -184,7 +190,7 @@ excludeSpacesCheckbox.addEventListener("change", (event) => {
   updateProgressBars();
 });
 
-textArea.addEventListener("input", function (e) {
+textArea.addEventListener("input", function () {
   //NOTE: Initial invoke & updating counts
   updateCounts();
 
@@ -195,14 +201,9 @@ textArea.addEventListener("input", function (e) {
 });
 
 seeMoreBtn.addEventListener("click", function () {
-  if (seeMoreBtn.textContent.includes("See more")) {
-    seeMoreBtn.firstChild.textContent = "See less ";
-  } else {
-    seeMoreBtn.firstChild.textContent = "See more ";
-  }
-
   [...chevronIcons].forEach(function (icon) {
     icon.toggleAttribute("hidden", !icon.hasAttribute("hidden"));
-    updateProgressBars(!icon.hasAttribute("hidden"));
   });
+  isExpanded = !isExpanded;
+  updateProgressBars();
 });
