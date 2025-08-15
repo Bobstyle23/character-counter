@@ -136,7 +136,10 @@ function updateProgressBars() {
     ? `<small class="error__text">Limit reached! Adjust your text to see your results.</small>`
     : progressResults.join("");
 
-  seeMoreBtn.toggleAttribute("hidden", progressValues.length < 5);
+  seeMoreBtn.toggleAttribute(
+    "hidden",
+    progressValues.length < 5 || isLimitExceeded,
+  );
   noTextInfo.toggleAttribute("hidden", progressValues.length);
 }
 
@@ -145,6 +148,7 @@ limitInputbox.addEventListener("input", (event) => {
   checkError();
   //NOTE: Updates counts on limit value change
   updateCounts();
+  updateProgressBars();
 });
 
 limitCheckbox.addEventListener("change", (event) => {
@@ -158,6 +162,7 @@ limitCheckbox.addEventListener("change", (event) => {
   limitValue = 0;
   isLimitExceeded = isChecked && isError;
   updateCounts();
+  updateProgressBars();
   toggleErrorClass(isError);
 });
 
