@@ -66,6 +66,17 @@ function checkError() {
   toggleErrorClass(isError);
 }
 
+function updateReadingTime(words) {
+  let readingTime = countReadingTime(words);
+
+  //NOTE: If limit exceeded set to 0 else count reading time
+  textReadingTime.textContent = isLimitExceeded
+    ? "0"
+    : !Number.isInteger(readingTime)
+      ? `<${Math.ceil(readingTime.toFixed(2))}`
+      : Math.ceil(readingTime.toFixed(2));
+}
+
 function updateCounts() {
   const value = textArea.value;
   totalWords = value.split(" ").filter(Boolean);
@@ -74,6 +85,8 @@ function updateCounts() {
   totalChars = isExcludeSpaceChecked
     ? value.replaceAll(" ", "")
     : value.split("");
+
+  updateReadingTime(totalWords);
 
   const totals = [totalChars, totalWords, totalSentences];
   [characterCount, wordCount, sentenceCount].forEach((count, idx) => {
@@ -158,10 +171,8 @@ textArea.addEventListener("input", function (e) {
 
   progressBarsContainer.innerHTML = progressResults.join("");
 
-  let readingTime = countReadingTime(totalWords);
-  textReadingTime.textContent = !Number.isInteger(readingTime)
-    ? `<${Math.ceil(readingTime.toFixed(2))}`
-    : Math.ceil(readingTime.toFixed(2));
+  //NOTE: Updates readingTime
+  updateReadingTime(totalWords);
 
   seeMoreBtn.toggleAttribute("hidden", uniqeCharsInfo.length < 5);
   noTextInfo.toggleAttribute("hidden", uniqeCharsInfo.length);
