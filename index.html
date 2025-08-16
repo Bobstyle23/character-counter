@@ -17,11 +17,11 @@
       <nav class="navigation">
         <div class="navigation__logo" role="img" aria-label="Logo"></div>
         <button type="button" class="navigation__btn" aria-label="Toggle theme">
-          <div
+          <span
             class="navigation__switch"
             role="img"
             aria-label="Theme switch"
-          ></div>
+          ></span>
         </button>
       </nav>
       <header>
@@ -29,8 +29,6 @@
       </header>
       <main class="main">
         <textarea
-          rows=""
-          cols=""
           class="main__text"
           placeholder="Start typing here… (or paste your text)"
         ></textarea>
@@ -84,6 +82,14 @@
             Approx. reading time:
             <span class="main__reading--time">0</span> minute
           </p>
+          <button
+            type="submit"
+            aria-hidden="true"
+            aria-label="Form submit button"
+            disabled
+            hidden
+            tabindex="-1"
+          ></button>
         </form>
       </main>
       <section class="result">

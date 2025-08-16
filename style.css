@@ -241,6 +241,7 @@
     }
   }
   .navigation__switch {
+    display: inline-block;
     width: 2rem;
     height: 2rem;
     background: var(--switch-btn) no-repeat center/contain;
