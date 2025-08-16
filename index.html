@@ -16,10 +16,7 @@
     <div class="container">
       <nav class="navigation">
         <div class="navigation__logo" role="img" aria-label="Logo"></div>
-        <button
-          class="navigation__btn"
-          aria-label="Theme switch button to change mode of the website from dark to light or vice versa"
-        >
+        <button type="button" class="navigation__btn" aria-label="Toggle theme">
           <div
             class="navigation__switch"
             role="img"
@@ -73,7 +70,15 @@
               value="limitCharacters"
             />
             <label for="limit">Set Character Limit</label>
-            <input type="text" id="character-limit" value="" hidden />
+            <input
+              type="text"
+              id="character-limit"
+              name="filterOptions"
+              value="limitCharacters value"
+              hidden
+              aria-hidden="true"
+              tabindex="-1"
+            />
           </div>
           <p class="main__reading">
             Approx. reading time:
@@ -82,7 +87,7 @@
         </form>
       </main>
       <section class="result">
-        <div class="result__counts">
+        <main class="result__counts">
           <article class="result__text">
             <p class="result__count result__count--chars">00</p>
             <p>
@@ -98,7 +103,7 @@
             <p class="result__count result__count--sentences">00</p>
             <p>Sentence Count</p>
           </article>
-        </div>
+        </main>
 
         <div class="result__progress-bars">
           <h2>Letter Density</h2>
