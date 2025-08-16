@@ -432,7 +432,7 @@
     grid-template-columns: repeat(auto-fit, minmax(min(22.4rem, 100%), 1fr));
     gap: var(--spacing-16);
 
-    div {
+    article {
       display: flex;
       flex-flow: column nowrap;
       gap: var(--spacing-8);

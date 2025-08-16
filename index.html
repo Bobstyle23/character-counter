@@ -16,7 +16,10 @@
     <div class="container">
       <nav class="navigation">
         <div class="navigation__logo" role="img" aria-label="Logo"></div>
-        <button class="navigation__btn">
+        <button
+          class="navigation__btn"
+          aria-label="Theme switch button to change mode of the website from dark to light or vice versa"
+        >
           <div
             class="navigation__switch"
             role="img"
@@ -54,11 +57,21 @@
         </div>
         <form class="main__filters">
           <div>
-            <input type="checkbox" name="" id="space" value="" />
+            <input
+              type="checkbox"
+              name="filterOptions"
+              id="space"
+              value="excludeSpaces"
+            />
             <label for="space">Exclude Spaces</label>
           </div>
           <div>
-            <input type="checkbox" name="" id="limit" value="" />
+            <input
+              type="checkbox"
+              name="filterOptions"
+              id="limit"
+              value="limitCharacters"
+            />
             <label for="limit">Set Character Limit</label>
             <input type="text" id="character-limit" value="" hidden />
           </div>
@@ -70,21 +83,21 @@
       </main>
       <section class="result">
         <div class="result__counts">
-          <div class="result__text">
+          <article class="result__text">
             <p class="result__count result__count--chars">00</p>
             <p>
               Total Characters
               <span class="result__count--no-space" hidden>(no space)</span>
             </p>
-          </div>
-          <div class="result__text">
+          </article>
+          <article class="result__text">
             <p class="result__count result__count--words">00</p>
             <p>Word Count</p>
-          </div>
-          <div class="result__text">
+          </article>
+          <article class="result__text">
             <p class="result__count result__count--sentences">00</p>
             <p>Sentence Count</p>
-          </div>
+          </article>
         </div>
 
         <div class="result__progress-bars">
