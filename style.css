@@ -61,8 +61,8 @@
 
     --main-filters-text: var(--clr-neutral-900);
     --checkbox-border: var(--clr-neutral-900);
-    --char-limit-color: var(--clr-neutral-900)
-      --result-title: var(--clr-neutral-900);
+    --char-limit-color: var(--clr-neutral-900);
+    --result-title: var(--clr-neutral-900);
 
     --result-no-text: var(--clr-neutral-600);
     --result-see-more: var(--clr-neutral-900);
@@ -459,7 +459,6 @@
 
         @media (min-width: 48em) {
           top: 0;
-          righy: -6rem;
         }
       }
 
