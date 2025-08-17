@@ -58,10 +58,9 @@ function toggleErrorClass(isError) {
 
 function checkError() {
   const value = textArea.value;
+  const lengthToCheck = totalChars?.length ?? value.length;
   const isError =
-    limitCheckbox.checked &&
-    (totalChars.length || value.length) > limitValue &&
-    Boolean(limitValue);
+    limitCheckbox.checked && lengthToCheck > limitValue && Boolean(limitValue);
 
   isLimitExceeded = isError;
   //NOTE: Invokes updateCounts() if limit exceeded
@@ -70,7 +69,7 @@ function checkError() {
 }
 
 function updateReadingTime(words) {
-  let readingTime = countReadingTime(words);
+  const readingTime = countReadingTime(words);
 
   //NOTE: If limit exceeded set to 0 else count reading time
   textReadingTime.textContent = isLimitExceeded

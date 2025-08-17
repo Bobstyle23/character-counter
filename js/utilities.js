@@ -1,4 +1,4 @@
-const AVG_READING_TIME = 260;
+const AVG_READING_TIME = 200;
 
 function countLetter(str, letter) {
   return str.split("").reduce((acc, curr) => {
