@@ -1,208 +1,253 @@
-const modeSwitchBtn = document.querySelector(".navigation__btn");
-const textArea = document.querySelector(".main__text");
-const filterForm = document.querySelector(".main__filters");
+const _AVG_READING_TIME = new WeakMap();
 
-const excludeSpacesCheckbox = document.getElementById("space");
-const noSpaceIndicatorText = document.querySelector(".result__count--no-space");
-const limitCheckbox = document.getElementById("limit");
-const limitInputbox = document.getElementById("character-limit");
+class CharacterCounter {
+  constructor() {
+    _AVG_READING_TIME.set(this, 200);
+    this.cacheDOM();
+    this.initState();
+    this.bindEvents();
+  }
 
-const characterCount = document.querySelector(".result__count--chars");
-const wordCount = document.querySelector(".result__count--words");
-const sentenceCount = document.querySelector(".result__count--sentences");
+  static {
+    if (window.matchMedia("(prefers-color-scheme:dark)").matches) {
+      document.documentElement.dataset.theme = "dark";
+    } else {
+      document.documentElement.dataset.theme = "light";
+    }
 
-const textReadingTime = document.querySelector(".main__reading--time");
-const progressBarsContainer = document.querySelector(".progress");
-const seeMoreBtn = document.querySelector(".see-more");
-const noTextInfo = document.querySelector(".no-characters");
-const chevronIcons = document.querySelectorAll('[aria-label="Chevron icon"]');
+    window
+      .matchMedia("(prefers-color-scheme:dark)")
+      .addEventListener("change", (event) => {
+        document.documentElement.dataset.theme = event.matches
+          ? "dark"
+          : "light";
+      });
+  }
 
-const errorBox = document.querySelector(".error__box");
-const errorLimitNumber = document.querySelector(".error__limit-number");
+  static #countLetter(str, letter) {
+    return str.split("").reduce((acc, curr) => {
+      if (curr.toLowerCase() === letter) {
+        acc++;
+      }
+      return acc;
+    }, 0);
+  }
 
-import { countLetter, countReadingTime, switchMode } from "./utilities.js";
+  static #countReadingTime(words, instance) {
+    return words.length / _AVG_READING_TIME.get(instance);
+  }
 
-//PERF: Mode auto-switch function
-(function () {
-  if (window.matchMedia("(prefers-color-scheme:dark)").matches) {
-    document.documentElement.dataset.theme = "dark";
-  } else {
+  static #switchMode() {
+    if (document.documentElement.dataset.theme === "light") {
+      document.documentElement.dataset.theme = "dark";
+      return;
+    }
     document.documentElement.dataset.theme = "light";
   }
 
-  window
-    .matchMedia("(prefers-color-scheme:dark)")
-    .addEventListener("change", (event) => {
-      document.documentElement.dataset.theme = event.matches ? "dark" : "light";
+  cacheDOM() {
+    this.modeSwitchBtn = document.querySelector(".navigation__btn");
+    this.textArea = document.querySelector(".main__text");
+    this.filterForm = document.querySelector(".main__filters");
+
+    this.excludeSpacesCheckbox = document.getElementById("space");
+    this.noSpaceIndicatorText = document.querySelector(
+      ".result__count--no-space",
+    );
+    this.limitCheckbox = document.getElementById("limit");
+    this.limitInputbox = document.getElementById("character-limit");
+
+    this.characterCount = document.querySelector(".result__count--chars");
+    this.wordCount = document.querySelector(".result__count--words");
+    this.sentenceCount = document.querySelector(".result__count--sentences");
+
+    this.textReadingTime = document.querySelector(".main__reading--time");
+    this.progressBarsContainer = document.querySelector(".progress");
+    this.seeMoreBtn = document.querySelector(".see-more");
+    this.noTextInfo = document.querySelector(".no-characters");
+    this.chevronIcons = document.querySelectorAll(
+      '[aria-label="Chevron icon"]',
+    );
+
+    this.errorBox = document.querySelector(".error__box");
+    this.errorLimitNumber = document.querySelector(".error__limit-number");
+  }
+
+  initState() {
+    this.limitValue = 0;
+    this.isExcludeSpaceChecked = false;
+    this.totalChars = [];
+    this.totalWords = [];
+    this.totalSentence = [];
+    this.isExpanded = false;
+
+    this.value = this.textArea.value;
+  }
+
+  bindEvents() {
+    this.limitInputbox.addEventListener("input", (e) => {
+      this.limitValue = Number(e.target.value);
+      this.checkError();
+      this.#updateCounts();
+      this.#updateProgressBars();
     });
-})();
 
-modeSwitchBtn.addEventListener("click", switchMode);
+    this.limitCheckbox.addEventListener("change", (e) => {
+      const isChecked = e.target.checked;
+      const isError =
+        this.limitCheckbox.checked &&
+        (this.totalChars?.length || this.value.length) > this.limitValue &&
+        Boolean(this.limitValue);
 
-filterForm.addEventListener("submit", function (e) {
-  e.preventDefault();
-});
+      this.limitInputbox.toggleAttribute("hidden", !isChecked);
+      this.limitInputbox.value = "";
+      this.limitValue = 0;
+      this.isLimitExceeded = isChecked && isError;
+      this.#updateCounts();
+      this.#updateProgressBars();
+      this.#toggleErrorClass(isError);
+    });
 
-let limitValue = 0;
+    this.excludeSpacesCheckbox.addEventListener("change", (e) => {
+      this.isExcludeSpaceChecked = e.target.checked;
+      this.noSpaceIndicatorText.toggleAttribute("hidden", !e.target.checked);
+      this.refreshUI();
+    });
 
-let isExcludeSpaceChecked = false;
-let isLimitExceeded = false;
-let totalChars, totalWords, totalSentences;
-let isExpanded = false;
+    this.textArea.addEventListener("input", (e) => {
+      this.value = e.target.value;
+      this.refreshUI();
+      this.updateReadingTime(this.totalWords);
+    });
 
-function toggleErrorClass(isError) {
-  textArea.classList.toggle("error", isError);
-  errorBox.toggleAttribute("hidden", !isError);
-  errorLimitNumber.textContent = limitValue;
-}
+    this.seeMoreBtn.addEventListener("click", () => {
+      [...this.chevronIcons].forEach((icon) => {
+        icon.toggleAttribute("hidden", !icon.hasAttribute("hidden"));
+      });
+      this.isExpanded = !this.isExpanded;
+      this.#updateProgressBars();
+    });
 
-function checkError() {
-  const value = textArea.value;
-  const lengthToCheck = totalChars?.length ?? value.length;
-  const isError =
-    limitCheckbox.checked && lengthToCheck > limitValue && Boolean(limitValue);
+    this.modeSwitchBtn.addEventListener("click", CharacterCounter.#switchMode);
+    this.filterForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+    });
+  }
 
-  isLimitExceeded = isError;
-  //NOTE: Invokes updateCounts() if limit exceeded
-  updateCounts();
-  toggleErrorClass(isError);
-}
+  refreshUI() {
+    this.#updateCounts();
+    this.checkError();
+    this.#updateProgressBars();
+  }
 
-function updateReadingTime(words) {
-  const readingTime = countReadingTime(words);
+  #toggleErrorClass(isError) {
+    this.textArea.classList.toggle("error", isError);
+    this.errorBox.toggleAttribute("hidden", !isError);
+    this.errorLimitNumber.textContent = this.limitValue;
+  }
 
-  //NOTE: If limit exceeded set to 0 else count reading time
-  textReadingTime.textContent = isLimitExceeded
-    ? "0"
-    : !Number.isInteger(readingTime)
-      ? `<${Math.ceil(readingTime.toFixed(2))}`
-      : Math.ceil(readingTime.toFixed(2));
-}
+  checkError() {
+    if (!this.limitCheckbox.checked || this.limitValue <= 0) {
+      this.isLimitExceeded = false;
+      this.#toggleErrorClass(false);
+      return;
+    }
+    const lengthToCheck = this.totalChars?.length ?? this.value.length;
+    const isError = lengthToCheck > this.limitValue;
 
-function updateCounts() {
-  const value = textArea.value;
-  totalWords = value.split(" ").filter(Boolean);
-  totalSentences = value.split(".").filter(Boolean);
+    this.isLimitExceeded = isError;
+    this.#updateCounts();
+    this.#toggleErrorClass(isError);
+  }
 
-  totalChars = isExcludeSpaceChecked
-    ? value.replaceAll(" ", "")
-    : value.split("");
+  updateReadingTime(words) {
+    const readingTime = CharacterCounter.#countReadingTime(words, this);
+    this.textReadingTime.textContent = this.isLimitExceeded
+      ? "0"
+      : !Number.isInteger(readingTime)
+        ? `<${Math.ceil(readingTime.toFixed(2))}`
+        : Math.ceil(readingTime.toFixed(2));
+  }
 
-  updateReadingTime(totalWords);
+  #updateCounts() {
+    this.totalWords = this.value.split(" ").filter(Boolean);
+    this.totalSentences = this.value.split(".").filter(Boolean);
+    this.totalChars = this.isExcludeSpaceChecked
+      ? this.value.replaceAll(" ", "")
+      : this.value.split("");
 
-  const totals = [totalChars, totalWords, totalSentences];
-  [characterCount, wordCount, sentenceCount].forEach((count, idx) => {
-    count.textContent = isLimitExceeded
-      ? "00"
-      : totals[idx].length.toString().padStart(2, "0");
-  });
-}
+    this.updateReadingTime(this.totalWords);
 
-function updateProgressBars() {
-  const value = textArea.value;
-  const onlyLetters = value.match(/[a-zA-Z]/g) || [];
+    const totals = [this.totalChars, this.totalWords, this.totalSentences];
+    [this.characterCount, this.wordCount, this.sentenceCount].forEach(
+      (count, idx) => {
+        count.textContent = this.isLimitExceeded
+          ? "00"
+          : totals[idx].length.toString().padStart(2, "0");
+      },
+    );
+  }
 
-  const uniqueCharacters = [
-    ...new Set(
-      value
-        .toLowerCase()
-        .split("")
-        .filter((char) => /[a-z]/.test(char)),
-    ),
-  ];
+  #updateProgressBars() {
+    const onlyLetters = this.value.match(/[a-zA-Z]/g) || [];
 
-  const progressValues = uniqueCharacters
-    .map((char) => {
-      return {
-        character: char,
-        count: countLetter(value, char),
-        percentage: (
-          (countLetter(value, char) / onlyLetters.length) *
-          100
-        ).toFixed(2),
-      };
-    })
-    .sort((a, b) => b.count - a.count);
+    const uniqueCharacters = [
+      ...new Set(
+        this.value
+          .toLowerCase()
+          .split("")
+          .filter((char) => /[a-z]/.test(char)),
+      ),
+    ];
 
-  const [topLetters, otherLetters] = [
-    progressValues.slice(0, 5),
-    progressValues.slice(5),
-  ];
+    const progressValues = uniqueCharacters
+      .map((char) => {
+        const count = CharacterCounter.#countLetter(this.value, char);
+        return {
+          character: char,
+          count,
+          percentage: ((count / onlyLetters.length) * 100).toFixed(2),
+        };
+      })
+      .sort((a, b) => b.count - a.count);
 
-  const lettersToShow = isExpanded
-    ? [...topLetters, ...otherLetters]
-    : topLetters;
+    const [topLetters, otherLetters] = [
+      progressValues.slice(0, 5),
+      progressValues.slice(5),
+    ];
 
-  progressBarsContainer.toggleAttribute("hidden", !progressValues.length);
+    const lettersToShow = this.isExpanded
+      ? [...topLetters, ...otherLetters]
+      : topLetters;
 
-  const progressResults = lettersToShow.map((progress) => {
-    return `
+    this.progressBarsContainer.toggleAttribute(
+      "hidden",
+      !progressValues.length,
+    );
+
+    const progressResults = lettersToShow.map((progress) => {
+      return `
         <p>${progress.character.toUpperCase()}</p>
         <progress class="progress-bar" value=${progress.percentage} max="100">${progress.percentage}</progress>
         <p class="count">${progress.count} <span>(${progress.percentage}%)</span></p>
         `;
-  });
+    });
 
-  progressBarsContainer.innerHTML = isLimitExceeded
-    ? `<small class="error__text">Limit reached! Adjust your text to see your results.</small>`
-    : progressResults.join("");
+    this.progressBarsContainer.innerHTML = this.isLimitExceeded
+      ? `<small class="error__text">Limit reached! Adjust your text to see your results.</small>`
+      : progressResults.join("");
 
-  seeMoreBtn.toggleAttribute(
-    "hidden",
-    progressValues.length < 5 || isLimitExceeded,
-  );
+    this.seeMoreBtn.toggleAttribute(
+      "hidden",
+      progressValues.length < 5 || this.isLimitExceeded,
+    );
 
-  seeMoreBtn.firstChild.textContent = isExpanded ? "See less" : "See more";
+    this.seeMoreBtn.firstChild.textContent = this.isExpanded
+      ? "See less"
+      : "See more";
 
-  noTextInfo.toggleAttribute("hidden", progressValues.length);
+    this.noTextInfo.toggleAttribute("hidden", progressValues.length);
+  }
 }
 
-limitInputbox.addEventListener("input", (event) => {
-  limitValue = Number(event.target.value);
-  checkError();
-  //NOTE: Updates counts on limit value change
-  updateCounts();
-  updateProgressBars();
-});
-
-limitCheckbox.addEventListener("change", (event) => {
-  const isChecked = event.target.checked;
-  const isError =
-    limitCheckbox.checked &&
-    (totalChars?.length || textArea.value.length) > limitValue &&
-    Boolean(limitValue);
-  limitInputbox.toggleAttribute("hidden", !isChecked);
-  limitInputbox.value = "";
-  limitValue = 0;
-  isLimitExceeded = isChecked && isError;
-  updateCounts();
-  updateProgressBars();
-  toggleErrorClass(isError);
-});
-
-excludeSpacesCheckbox.addEventListener("change", (event) => {
-  isExcludeSpaceChecked = event.target.checked;
-  noSpaceIndicatorText.toggleAttribute("hidden", !event.target.checked);
-  //NOTE: Calls updateCounts() on exclue space checkbox checked
-  updateCounts();
-  checkError();
-  updateProgressBars();
-});
-
-textArea.addEventListener("input", function () {
-  //NOTE: Initial invoke & updating counts
-  updateCounts();
-
-  //NOTE: Updates readingTime
-  updateReadingTime(totalWords);
-  checkError();
-  updateProgressBars();
-});
-
-seeMoreBtn.addEventListener("click", function () {
-  [...chevronIcons].forEach(function (icon) {
-    icon.toggleAttribute("hidden", !icon.hasAttribute("hidden"));
-  });
-  isExpanded = !isExpanded;
-  updateProgressBars();
-});
+new CharacterCounter();
