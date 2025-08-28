@@ -78,7 +78,7 @@ class CharacterCounter {
     this.isExcludeSpaceChecked = false;
     this.totalChars = [];
     this.totalWords = [];
-    this.totalSentence = [];
+    this.totalSentences = [];
     this.isExpanded = false;
 
     this.value = this.textArea.value;
